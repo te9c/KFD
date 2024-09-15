@@ -62,7 +62,7 @@ exit - exit this shell");
         decimal amount = 0;
 
         if (!decimal.TryParse(amountStr, out amount)) {
-            Console.WriteLine($"Unable to parse {amountStr}!");
+            Console.WriteLine($"Unable to parse {amountStr} to number!");
             return;
         }
 
@@ -107,7 +107,7 @@ Updated Rates:");
         decimal amount = 0;
 
         if (!decimal.TryParse(amountStr, out amount)) {
-            Console.WriteLine($"Unable to parse {amountStr}!");
+            Console.WriteLine($"Unable to parse {amountStr} to a number!");
             return;
         }
 
@@ -150,7 +150,7 @@ EUR  : {Exchanger.UserBalance["EUR"]}
 USDT : {Exchanger.UserBalance["USDT"]}
 BTC  : {Exchanger.UserBalance["BTC"]}
 
-ExchangerBalance:
+Exchanger balance:
 RUB  : {Exchanger.ExchangerBalance["RUB"]}
 USD  : {Exchanger.ExchangerBalance["USD"]}
 EUR  : {Exchanger.ExchangerBalance["EUR"]}
