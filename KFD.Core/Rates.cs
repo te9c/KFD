@@ -13,7 +13,7 @@ public class Rates {
     public const decimal MaxChangeratePercent = 0.05M;
     public const decimal MinChangeratePercent = -0.05M;
 
-    public void UpdateRate() {
+    public void UpdateRates() {
         foreach(var pair in Pairs) {
             decimal minValue = pair.Value * (1.00M + MinChangeratePercent);
             decimal maxValue = pair.Value * (1.00M + MaxChangeratePercent);

@@ -13,6 +13,7 @@ class Program {
             new Command("sell", Sell),
             new Command("rates", PrintRates),
             new Command("balance", PrintBalance),
+            new Command("clear", (args) => { Console.Clear(); })
         };
 
         while (true) {
@@ -46,6 +47,7 @@ balance - show your and exchanger's current balance
 rates - show exchange rates and exchanger balance
 buy <Pair> <Amount> - buy specified pair
 sell <Pair> <Amount> - sell specified pair
+clear - clear terminal screen
 help - show this message
 exit - exit this shell");
     }
@@ -64,28 +66,35 @@ exit - exit this shell");
             return;
         }
 
-        var exitCode = Exchanger.Buy(pair, amount);
+        var result = Exchanger.Buy(pair, amount);
 
-        if (exitCode == ExchangeStatus.InvalidPair) {
+        if (result.Status == ExchangeStatus.InvalidPair) {
             Console.WriteLine($"Invalid pair {pair}!");
             return;
         }
-        if (exitCode == ExchangeStatus.InsufficientFundsExchanger) {
+        if (result.Status == ExchangeStatus.InsufficientFundsExchanger) {
             Console.WriteLine($"Exchanger doesnt have sufficient amount of funds for this transaction!");
             return;
         }
-        if (exitCode == ExchangeStatus.InsufficientFundsUser) {
+        if (result.Status == ExchangeStatus.InsufficientFundsUser) {
             Console.WriteLine($"You dosnt have sufficient amount of funds for this transaction!");
             return;
         }
 
-        decimal minus = amount * Exchanger.Rates.Pairs[pair];
+        Console.WriteLine(
+@$"Successful transaction!
++{result.PlusValue} {result.PlusCurrency} 
+-{result.MinusValue} {result.MinusCurrency}
 
-        Console.WriteLine(@$"Successful transaction!
-+${amount} ${pair.Split('/')[0]}
--${minus} ${pair.Split('/')[1]}
+Updated Rates:");
 
-Rates updated.");
+        foreach (var pairDiff in result.RatesDiff) {
+            Console.Write($"{pairDiff.Key}: ");
+            if (pairDiff.Value >= 0) {
+                Console.Write('+');
+            }
+            Console.WriteLine(pairDiff.Value);
+        }
     }
 
     private static void Sell(string[] args) {
@@ -102,28 +111,35 @@ Rates updated.");
             return;
         }
 
-        var exitCode = Exchanger.Sell(pair, amount);
+        var result = Exchanger.Sell(pair, amount);
 
-        if (exitCode == ExchangeStatus.InvalidPair) {
+        if (result.Status == ExchangeStatus.InvalidPair) {
             Console.WriteLine($"Invalid pair {pair}!");
             return;
         }
-        if (exitCode == ExchangeStatus.InsufficientFundsExchanger) {
+        if (result.Status == ExchangeStatus.InsufficientFundsExchanger) {
             Console.WriteLine($"Exchanger doesnt have sufficient amount of funds for this transaction!");
             return;
         }
-        if (exitCode == ExchangeStatus.InsufficientFundsUser) {
+        if (result.Status == ExchangeStatus.InsufficientFundsUser) {
             Console.WriteLine($"You dosnt have sufficient amount of funds for this transaction!");
             return;
         }
 
-        decimal plus = amount * Exchanger.Rates.Pairs[pair];
+        Console.WriteLine(
+@$"Successful transaction!
++{result.PlusValue} {result.PlusCurrency}
+-{result.MinusValue} {result.MinusCurrency}
 
-        Console.WriteLine(@$"Successful transaction!
-+{plus} {pair.Split('/')[1]}
--{amount} {pair.Split('/')[0]}
+Updated Rates:");
 
-Rates updated.");
+        foreach (var pairDiff in result.RatesDiff) {
+            Console.Write($"{pairDiff.Key}: ");
+            if (pairDiff.Value >= 0) {
+                Console.Write('+');
+            }
+            Console.WriteLine(pairDiff.Value);
+        }
     }
 
     private static void PrintBalance(string[] args) {
@@ -149,7 +165,7 @@ RUB/EUR  : {Exchanger.Rates.Pairs["RUB/EUR"]}
 USD/EUR  : {Exchanger.Rates.Pairs["USD/EUR"]}
 USD/USDT : {Exchanger.Rates.Pairs["USD/USDT"]}
 USD/BTC  : {Exchanger.Rates.Pairs["USD/BTC"]}");
-    }
+}
 
     public class Command {
         public string Name { get; init; }
